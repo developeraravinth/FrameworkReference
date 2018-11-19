@@ -1,0 +1,441 @@
+package runmangerPkg;
+
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.util.CellReference;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+public class ConnectExcel {
+
+	/*** Variable Initializing Area - START ***/
+	static int getdata_Column = 0;
+	static int getdata_Row = 0;
+	static int getdata_Cellvalue = 0;
+
+	/*** Variable Initializing Area - END ***/
+	
+	public static void readXLSXFile2(ArrayList<String> markVal) throws IOException
+	{
+		String path= System.getProperty("user.dir") + "\\RunManager_Test.xlsx";
+		InputStream ExcelFileToRead = new FileInputStream(path);
+		
+		XSSFWorkbook wb = new XSSFWorkbook(ExcelFileToRead);
+
+		XSSFSheet sheet=wb.getSheetAt(0);
+		XSSFRow row; 
+		XSSFCell cell;
+
+		Iterator rows = sheet.rowIterator();
+		
+		//Initially making NO for all the test cases
+		int lastrowNum = sheet.getLastRowNum();
+		
+		//Marking all as NO initially
+		for (int q = 0; q < lastrowNum; q++) {
+			
+			String markallNO = sheet.getRow(q+1).getCell(1).getStringCellValue().trim();
+			if (markallNO.equals("Yes")) {
+				sheet.getRow(q+1).getCell(1).setCellValue("No");
+			}
+			
+			
+			
+		}
+		
+
+		while (rows.hasNext())
+		{
+			row=(XSSFRow) rows.next();
+			Iterator cells = row.cellIterator();
+			
+			colrip:{
+
+			while (cells.hasNext())
+			{
+				cell=(XSSFCell) cells.next();
+
+				if (cell.getCellType() == XSSFCell.CELL_TYPE_STRING)
+				{
+					
+					
+					
+					
+					
+					System.out.print(cell.getStringCellValue()+" ");
+					//Iterating the selected test cases
+					int markVal_size = markVal.size();
+					for (int h = 0; h < markVal_size; h++) {
+						
+						String markVal_Text = markVal.get(h);
+						String excel_Text = cell.getStringCellValue().toString().trim();
+						
+						if (excel_Text.equals(markVal_Text)) {
+							if (cell.getRow().getCell(1).toString().trim().equals("No")) {
+								int rowIndex = cell.getRowIndex();
+								sheet.getRow(rowIndex).getCell(1).setCellValue("Yes");
+								break colrip;
+							}
+							
+						}
+						
+					}
+					
+					
+				}
+			}
+			} //colrip
+			System.out.println();
+		}
+		//write this workbook to an Outputstream.path
+				FileOutputStream fileOut = new FileOutputStream(path);
+				wb.write(fileOut);
+				fileOut.flush();
+				fileOut.close();
+
+	}
+	
+	public static ArrayList<String> readXLSXFileImport() throws IOException
+	{
+		//Stores the test cases in this arraylist
+		ArrayList<String> importttlTC = new ArrayList<>();
+		
+		String path= System.getProperty("user.dir") + "\\RunManager_Test.xlsx";
+		InputStream ExcelFileToRead = new FileInputStream(path);
+		
+		XSSFWorkbook wb = new XSSFWorkbook(ExcelFileToRead);
+
+		XSSFSheet sheet=wb.getSheetAt(0);
+		XSSFRow row; 
+		XSSFCell cell;
+
+		Iterator rows = sheet.rowIterator();
+		
+		//Initially making NO for all the test cases
+		int lastrowNum = sheet.getLastRowNum();
+		
+		//Marking all as NO initially
+		for (int q = 0; q < lastrowNum; q++) {
+			
+			String markallNO = sheet.getRow(q+1).getCell(0).getStringCellValue().trim();
+			importttlTC.add(markallNO);
+			
+			
+			
+		}
+		
+		return importttlTC;
+		
+
+	}
+
+
+
+	public static void readXLSFile() throws IOException
+	{
+		InputStream ExcelFileToRead = new FileInputStream("C:/Test.xls");
+		HSSFWorkbook wb = new HSSFWorkbook(ExcelFileToRead);
+
+		HSSFSheet sheet=wb.getSheetAt(0);
+		HSSFRow row; 
+		HSSFCell cell;
+
+		Iterator rows = sheet.rowIterator();
+
+		while (rows.hasNext())
+		{
+			row=(HSSFRow) rows.next();
+			Iterator cells = row.cellIterator();
+
+			while (cells.hasNext())
+			{
+				cell=(HSSFCell) cells.next();
+
+				if (cell.getCellType() == HSSFCell.CELL_TYPE_STRING)
+				{
+					System.out.print(cell.getStringCellValue()+" ");
+				}
+				else if(cell.getCellType() == HSSFCell.CELL_TYPE_NUMERIC)
+				{
+					System.out.print(cell.getNumericCellValue()+" ");
+				}
+				else
+				{
+					//U Can Handel Boolean, Formula, Errors
+				}
+			}
+			System.out.println();
+		}
+
+	}
+
+	public static void writeXLSFile() throws IOException {
+
+		String path= System.getProperty("user.dir") + "\\RunManager_Test.xlsx";
+
+		String excelFileName = path;//name of excel file
+
+		String sheetName = "Sheet1";//name of sheet
+
+		HSSFWorkbook wb = new HSSFWorkbook();
+		HSSFSheet sheet = wb.createSheet(sheetName) ;
+
+		//iterating r number of rows
+		for (int r=0;r < 5; r++ )
+		{
+			HSSFRow row = sheet.createRow(r);
+
+			//iterating c number of columns
+			for (int c=0;c < 5; c++ )
+			{
+				HSSFCell cell = row.createCell(c);
+
+				cell.setCellValue("Cell "+r+" "+c);
+			}
+		}
+
+		FileOutputStream fileOut = new FileOutputStream(excelFileName);
+
+		//write this workbook to an Outputstream.
+		wb.write(fileOut);
+		fileOut.flush();
+		fileOut.close();
+	}
+
+	public static void readXLSXFile(ArrayList<String> markVal) throws IOException
+	{
+		String path= System.getProperty("user.dir") + "\\RunManager_Test.xlsx";
+		
+
+
+		InputStream ExcelFileToRead = new FileInputStream(path);
+		XSSFWorkbook  wb = new XSSFWorkbook(ExcelFileToRead);
+
+		XSSFWorkbook test = new XSSFWorkbook(); 
+
+		XSSFSheet sheet = wb.getSheetAt(0);
+		XSSFRow row; 
+		XSSFCell cell;
+
+		Iterator rows = sheet.rowIterator();
+
+		cellRow:{
+			while (rows.hasNext()){
+
+
+
+				row=(XSSFRow) rows.next();
+				Iterator cells = row.cellIterator();
+				cellCol:{
+
+
+					while (cells.hasNext()){
+
+						cell=(XSSFCell) cells.next();
+
+						if (cell.getCellType() == XSSFCell.CELL_TYPE_STRING){
+
+
+							String tc_Name = cell.getStringCellValue().trim();
+							System.out.print(tc_Name);
+
+							if (tc_Name.equals("Test Case")) {
+								getdata_Column = cell.getColumnIndex();
+								//System.out.println(getdata_Column);
+
+								break cellCol;
+							}/*else {
+								//Iterate till it finds the exact Test case
+								int markVal_Count = markVal.size();
+								for (int f = 0; f < markVal_Count; f++) {
+									
+									System.out.println(markVal.get(f));
+									
+									if (markVal.get(f).contains(tc_Name)) {
+										getdata_Row = cell.getRowIndex();
+										sheet.getRow(getdata_Row).getCell(1).setCellValue("Yes");
+										break cellCol;
+									}
+									
+									if (f == markVal_Count) {
+										break cellRow;
+									}
+									
+									
+									
+									
+									
+
+									if (tc_Name.equals(markVal.get(f))) {
+								getdata_Row = cell.getRowIndex();
+								System.out.println(row.getLastCellNum());
+								break cellCol;
+									Iterator rows2 = sheet.rowIterator();
+									tc_Row_Iterate:{
+										int cellvalueindex = 1;
+										while (rows2.hasNext()){
+											row=(XSSFRow) rows2.next();
+											Iterator cells2 = row.cellIterator();
+											tc_Cell_Iterate:{
+												while (cells2.hasNext()){
+
+													cell=(XSSFCell) cells2.next();
+
+													if (cell.getCellType() == XSSFCell.CELL_TYPE_STRING){
+														//String markVal_TC_Name = markVal.get(index)
+														//if (tc_Name.equals(tc_Name_loop)) {
+														
+															if (markVal.get(f).contains(tc_Name)) {
+															getdata_Row = cell.getRowIndex();
+															
+															//System.out.println(sheet.getRow(getdata_Row).getCell(1));
+															//if (sheet.getRow(getdata_Row+1).getCell(1).equals("No")) {
+																sheet.getRow(getdata_Row+1).getCell(1).setCellValue("Yes");
+															//}
+															
+															
+															break cellCol;
+														}else {
+															break tc_Cell_Iterate;
+														}
+													}
+												}
+											} //tc_Cell_Iterate
+
+										} 
+										cellvalueindex = cellvalueindex + 1;
+									} //tc_Row_Iterate
+
+
+									}
+								}*/
+
+							//Marking all test case as "No" excluding the selected ones
+							int lastrowNum = sheet.getLastRowNum();
+							System.out.println(lastrowNum);
+							
+							//Marking all as NO initially
+							for (int q = 0; q < lastrowNum; q++) {
+								String markallNO = sheet.getRow(q+1).getCell(1).getStringCellValue().trim();
+								if (markallNO.equals("Yes")) {
+									sheet.getRow(q+1).getCell(1).setCellValue("No");
+								}
+								
+								
+								
+							}
+							
+							/*//write this workbook to an Outputstream.path
+							FileOutputStream fileOut = new FileOutputStream(path);
+							wb.write(fileOut);*/
+							
+							
+							for (int p = 0; p < lastrowNum; p++) {
+								try {
+									String sheetVal = sheet.getRow(p+1).getCell(0).getStringCellValue().trim();
+									if (markVal.get(p).equals(sheetVal)) {
+										sheet.getRow(p+1).getCell(1).setCellValue("Yes");
+									}
+								} catch (Exception e) {
+									// TODO Auto-generated catch block
+									sheet.getRow(p+1).getCell(1).setCellValue("No");
+								}
+								
+								if (p==(lastrowNum-1)) {
+									break cellRow;
+								}
+							}
+
+
+							}
+
+
+
+
+
+
+							/*else if(cell.getCellType() == XSSFCell.CELL_TYPE_NUMERIC)
+				{
+					System.out.print(cell.getNumericCellValue()+"     ");
+				}
+				else
+				{
+					//U Can Handel Boolean, Formula, Errors
+				}*/
+						}
+
+					} //cellCol
+
+					System.out.println();
+				}
+
+			} //cellRow
+		
+		
+
+		//write this workbook to an Outputstream.path
+		FileOutputStream fileOut = new FileOutputStream(path);
+		wb.write(fileOut);
+		fileOut.flush();
+		fileOut.close();
+
+		}
+
+		public static void writeXLSXFile() throws IOException {
+
+			String path= System.getProperty("user.dir") + "\\RunManager_Test.xlsx";
+
+			String excelFileName = path;//name of excel file
+
+			String sheetName = "Sheet2";//name of sheet
+
+			XSSFWorkbook wb = new XSSFWorkbook();
+			XSSFSheet sheet = wb.createSheet(sheetName) ;
+
+			//iterating r number of rows
+			for (int r=0;r < 5; r++ )
+			{
+				XSSFRow row = sheet.createRow(r);
+
+				//iterating c number of columns
+				for (int c=0;c < 5; c++ )
+				{
+					XSSFCell cell = row.createCell(c);
+
+					cell.setCellValue("Cell "+r+" "+c);
+				}
+			}
+
+			FileOutputStream fileOut = new FileOutputStream(excelFileName);
+
+			//write this workbook to an Outputstream.
+			wb.write(fileOut);
+			fileOut.flush();
+			fileOut.close();
+		}
+
+		public static void main(String[] args) throws IOException {
+
+			//writeXLSFile();
+			//readXLSFile();
+
+			//writeXLSXFile();
+			///////readXLSXFile(null);
+			readXLSXFileImport();
+			readXLSXFile2(null);
+			
+
+		}
+
+	}

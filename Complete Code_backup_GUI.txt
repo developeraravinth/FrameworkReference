@@ -1,0 +1,490 @@
+package runmangerPkg;
+
+import java.awt.EventQueue;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.util.ArrayList;
+
+import javax.swing.JCheckBox;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.UIManager;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import java.awt.SystemColor;
+import java.awt.Font;
+import javax.swing.ListSelectionModel;
+import java.awt.Dimension;
+
+public class RunManagerGUI extends ConnectExcel {
+
+	private JFrame frame;
+	private JTable table;
+	private JTable table_1;
+	JCheckBox checkbox;
+	private ArrayList<String> selCheckbox = new ArrayList<>();
+	JButton btnNewButton_1;
+	String selText = null;
+	int ttlItems;
+	JLabel lblNewLabel = new JLabel();
+	private JTable table_2;
+	JScrollPane scrollPane_1 = new JScrollPane();
+	String itemName = null;
+	String name1 = null;
+	String name2 = null;
+	String name3 = null;
+
+
+	/*** from try ***/
+
+	DefaultTableModel listTableModel;
+	JButton btnNewButton_2 = new JButton("Select All");
+	JButton btnNewButton_3 = new JButton("Deselect All");
+
+	JButton btnmark = new JButton("Mark Cases");
+	ArrayList<String> markVal = new ArrayList<>();
+
+
+
+
+
+
+
+
+
+
+
+	ArrayList<String> ttlCollection = new ArrayList<>(); //Chumma created for checking
+
+
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					RunManagerGUI window = new RunManagerGUI();
+					window.frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the application.
+	 * @throws IOException 
+	 */
+	public RunManagerGUI() throws IOException {
+		initialize();
+	}
+
+	/**
+	 * Initialize the contents of the frame.
+	 * @throws IOException 
+	 */
+	public void initialize() throws IOException {
+
+
+		frame = new JFrame();
+		frame.setBounds(100, 100, 703, 423);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.getContentPane().setLayout(null);
+
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(28, 30, 188, 152);
+		frame.getContentPane().add(scrollPane);
+
+		//Getting amount of records here in a variable
+		ArrayList<String> ttlimports = readXLSXFileImport();
+		int ttlRecords = ttlimports.size();
+
+		JPanel panel = new JPanel();
+		scrollPane.setViewportView(panel);
+		panel.setLayout(new GridLayout(ttlRecords,0));
+
+		JButton btnNewButton = new JButton();
+
+		btnNewButton.setVisible(true);
+
+
+		//Creating checkboxes w.r.t it's total records
+		for (int i = 1; i <= ttlRecords; i++) {
+
+
+			JCheckBox checkbox = new JCheckBox();
+			//ArrayList<String> ttlimports = readXLSXFileImport();
+			
+			//ttlRecords = ttlimports.size();
+			
+			checkbox.setText(ttlimports.get(i-1));
+			panel.add(checkbox);
+			
+			
+			/*checkbox.setText("Test Case " + i);
+			panel.add(checkbox);*/
+			
+
+			//To Select All
+
+			btnNewButton_2.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {
+
+
+					for (int j = 0; j <= ttlRecords; j++) {
+						///////////////System.out.println(checkbox.getText());
+						checkbox.setSelected(true);
+
+						if (!selCheckbox.contains(checkbox.getText())) {
+							selCheckbox.add(checkbox.getText());
+						}
+
+					}
+
+
+				}
+			});
+
+
+			//To De select all
+
+			btnNewButton_3.addActionListener(new ActionListener() {
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					// TODO Auto-generated method stub
+					for (int u = 0; u <= ttlRecords; u++) {
+						///////////System.out.println(checkbox.getText());
+
+						if (checkbox.isSelected()) {
+							checkbox.setSelected(false);
+						}
+
+						if (selCheckbox.contains(checkbox.getText())) {
+							selCheckbox.remove(checkbox.getText());
+						}
+
+					}              
+
+
+				}
+			});
+
+
+			checkbox.addActionListener(new ActionListener() {
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
+
+
+
+					// TODO Auto-generated method stub
+
+
+					if (checkbox.isSelected()) {
+
+						String selText = checkbox.getText();
+						//System.out.println(selText);
+						selCheckbox.add(selText);
+					}else{
+						String selText = checkbox.getText();
+						if (selCheckbox.contains(selText)) {
+							selCheckbox.remove(selText);
+						}
+
+					}
+
+
+				}
+			});
+
+
+
+
+		}
+
+		JButton btnNewButton_1 = new JButton(">>");
+		btnNewButton_1.setFont(new Font("Tahoma", Font.PLAIN, 10));
+		btnNewButton_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+
+				/*** chumma ***/
+
+
+
+				/*******************/
+
+				int l = 0;
+
+				int outRowCount = listTableModel.getRowCount();
+				/////////System.out.println(outRowCount);
+
+
+
+				if (outRowCount!=0) {
+					//for (int m = 1; m < outRowCount; m++) {
+					/*System.out.println(listTableModel.getColumnName(0));
+                                                                                System.out.println(listTableModel.getValueAt(0, 0));
+                                                                                System.out.println(listTableModel.getValueAt(1, 0));
+                                                                                System.out.println(listTableModel.getValueAt(2, 0));*/
+
+					for (int h = 0; h < outRowCount; h++) {
+						listTableModel.removeRow(0);
+					}
+
+					//listTableModel.removeRow(1);
+
+					//listTableModel.removeRow(2);
+
+
+
+					//}
+
+				}
+
+
+
+				frame.setVisible(true);
+
+
+				ttlItems = selCheckbox.size();
+				lblNewLabel.setText("Queued Test Case Count: " + ttlItems);
+
+				for (l = 0; l < ttlItems; l++) {
+					itemName = selCheckbox.get(l);
+					/////////System.out.println(itemName);
+
+
+					listTableModel.addRow(new Object[]{itemName});
+
+				}
+
+				/*for (int j = 1; j < 5; j++) {
+
+                                                                                //ArrayList<String> ttlCollection = new ArrayList<>();
+                                                                                String objTemplate = "{null}".replace("null", "\"Hello " + j + "\"");
+                                                                                ttlCollection.add(objTemplate);
+
+
+
+                                                                }
+
+                                                                String sgbn = ttlCollection.toString().replace("[", "").replace("]", "" + ",");
+                                                                System.out.println(sgbn);
+
+                                                                Object obj = sgbn;
+
+                                                                Object objasde = "{null},";
+
+                                                                name1 = "Hello1";
+                                                                name2 = "Hello2";*/
+
+
+				/*** Table functionality here START ***/
+
+				/*for (int i = 1; i < 25; i++) {
+                                                        String rowString = "Quiz #" + i;
+                                                        listTableModel.addRow(new Object[]{rowString, "ICON "+i});
+                                                    }*/
+
+				/*table_2.setModel(new DefaultTableModel(
+
+                                                                                                new Object[][] {
+
+
+                                                                                                                {},{},{},{},{},{},{},{},{},{},
+                                                                                                                {},{},{},{},{},{},{},{},{},{},
+                                                                                                                {},{},{},{},{},{},{},{},{},{},
+                                                                                                                {},{},{},{},{},{},{},{},{},{},
+                                                                                                                {},{},{},{},{},{},{},{},{},{},
+                                                                                                                {},{},{},{},{},{},{},{},{},{},
+                                                                                                                {},{},{},{},{},{},{},{},{},{},
+                                                                                                                {},{},{},{},{},{},{},{},{},{},
+                                                                                                                {},{},{},{},{},{},{},{},{},{},
+                                                                                                                {},{},{},{},{},{},{},{},{},{},
+                                                                                                                {},{},{},{},{},{},{},{},{},{},
+                                                                                                                {},{},{},{},{},{},{},{},{},{},
+                                                                                                                {},{},{},{},{},{},{},{},{},{},
+                                                                                                                {},{},{},{},{},{},{},{},{},{},
+                                                                                                                {},{},{},{},{},{},{},{},{},{},
+                                                                                                                {},{},{},{},{},{},{},{},{},{},
+                                                                                                                {},{},{},{},{},{},{},{},{},{},
+                                                                                                                {},{},{},{},{},{},{},{},{},{},
+                                                                                                                {},{},{},{},{},{},{},{},{},{},
+                                                                                                                {},{},{},{},{},{},{},{},{},{},
+
+
+
+                                                                                                                {null},
+                                                                                                                {null},
+                                                                                                                {null},
+                                                                                                                {null},
+                                                                                                                {null},
+                                                                                                                {null},
+                                                                                                                {null},
+                                                                                                                {null},
+                                                                                                                {null},
+                                                                                                                {null},
+                                                                                                },
+                                                                                                new String[] {
+                                                                                                                "Queued Test Cases: " + ttlItems
+                                                                                                }
+                                                                                ));*/
+
+				/*** Table functionality here END***/
+
+
+			}
+		});
+
+
+		/*** For checking extends method of ConnectExcel class - START ***/
+
+		btnmark.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				
+				markVal.removeAll(markVal);
+
+				//markVal
+				int markVal_ttlrows = listTableModel.getRowCount();
+				for (int m = 0; m < markVal_ttlrows; m++) {
+					String markVal_txt = listTableModel.getValueAt(m, 0).toString().trim();
+					if (!markVal.contains(markVal_txt)) {
+						markVal.add(markVal_txt);	
+					}
+				}
+
+				//Invoke Excel here
+				RunManagerGUI excelconnect = null;
+				try {
+					excelconnect = new RunManagerGUI();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				try {
+					//excelconnect.readXLSXFile(markVal);
+					excelconnect.readXLSXFile2(markVal);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+			}
+		});
+
+
+
+
+		/*** For checking extends method of ConnectExcel class - END ***/
+
+
+		btnNewButton_1.setBounds(279, 133, 54, 31);
+		btnNewButton_1.setVisible(true);
+		frame.getContentPane().add(btnNewButton_1);
+		lblNewLabel.setBackground(SystemColor.text);
+		lblNewLabel.setBorder(UIManager.getBorder("TitledBorder.border"));
+
+
+
+		lblNewLabel.setText("Queued Test Case Count: ");
+
+
+		lblNewLabel.setBounds(235, 89, 174, 23);
+		frame.getContentPane().add(lblNewLabel);
+
+
+		scrollPane_1.setBounds(460, 30, 174, 152);
+		frame.getContentPane().add(scrollPane_1);
+
+		// Table GUI
+
+		/*table_2 = new JTable();
+                                scrollPane_1.setViewportView(table_2);
+
+                                table_2.setColumnSelectionAllowed(true);
+                                table_2.setCellSelectionEnabled(true);*/
+
+
+
+		//listTable = new JTable(listTableModel);
+		/* listTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+                    listTable.setCellEditor(null);
+                    frame.add(listTable);
+                    frame.setVisible(true);*/
+		//listTable.setBounds(37, 143, 397, 183);
+
+		/*JFrame frame = new JFrame();
+                    frame.add(listTable);
+                    frame.setVisible(true);
+                    frame.pack();*/
+
+		Object[][] rowData = {};
+		Object[] columnNames = {" Queued Test Cases "};
+
+		//public void testCase() {
+
+		listTableModel = new DefaultTableModel(rowData, columnNames);
+		/*for (int i = 1; i < 25; i++) {
+                                        String rowString = "Quiz #" + i;
+                                        listTableModel.addRow(new Object[]{rowString, "ICON "+i});
+                                    }*/
+
+		//listTableModel = new DefaultTableModel(50, 50);
+
+		JTable listTable;
+		listTable = new JTable(listTableModel);
+		listTable.setIntercellSpacing(new Dimension(0, 0));
+		listTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		listTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+
+
+		////////System.out.println(listTableModel.getColumnName(0));
+
+
+
+
+		scrollPane_1.setViewportView(listTable);
+
+
+
+		btnNewButton_2.setBounds(28, 193, 89, 23);
+		frame.getContentPane().add(btnNewButton_2);
+
+
+		btnNewButton_3.setBounds(127, 193, 102, 23);
+		frame.getContentPane().add(btnNewButton_3);
+
+
+		btnmark.setBounds(500, 193, 105, 23);
+		btnmark.setVisible(true);
+		frame.getContentPane().add(btnmark);
+
+
+		scrollPane_1.setVisible(true);
+
+
+
+
+
+
+	}
+
+	public void tcValImport() {
+
+		
+
+	}
+
+}
