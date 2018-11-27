@@ -1,0 +1,102 @@
+package commonComponents.com.cognizant.framework;
+
+//package com.example.xml;
+
+import java.io.File;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+public class Junit_XML {
+
+	private static volatile String reportPathpipeline;
+
+
+	public static void CreateAXmlFile(String tcname,String strtcstatus,String strlogtype,String strlogmessage,String actualExecutiontime)
+	{
+		try {
+
+
+			FrameworkParameters frameworkParameters =FrameworkParameters.getInstance();
+
+			reportPathpipeline =
+					frameworkParameters.getRelativePath() +
+					Util.getFileSeparator() + "Results" +
+					//Util.getFileSeparator() + frameworkParameters.getRunConfiguration() + 
+					Util.getFileSeparator() + "Pipeline";
+
+			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+
+			// root elements for Test Case
+			Document doc = docBuilder.newDocument();
+			Element rootElement = doc.createElement("testsuite");
+			doc.appendChild(rootElement);
+
+			// set attribute to test element
+			Attr attr = doc.createAttribute("time");
+			attr.setValue(actualExecutiontime);
+			rootElement.setAttributeNode(attr);
+
+			// Test Name name elements
+			Element testName = doc.createElement("testcase");
+			rootElement.appendChild(testName);
+
+			// set attribute to test case
+			Attr attrtcname = doc.createAttribute("name");
+			attrtcname.setValue(tcname);
+			testName.setAttributeNode(attrtcname);
+
+			// set attribute to test element
+			Attr attrtctime = doc.createAttribute("time");
+			attrtctime.setValue(actualExecutiontime);
+			testName.setAttributeNode(attrtctime);
+
+
+			if ("failed".equalsIgnoreCase(strtcstatus))           
+			{
+				Element testExecution = doc.createElement("failure");
+				Attr attrfailuremsg = doc.createAttribute("message");
+				attrfailuremsg.setValue(strlogtype);
+				testExecution.setAttributeNode(attrfailuremsg);           	
+				testExecution.appendChild(doc.createTextNode(strlogmessage));
+				testName.appendChild(testExecution);
+			}else
+			{
+
+				rootElement.appendChild(doc.createComment("Passed")); 
+
+
+			}
+
+			// test Execution elements
+
+			// write the content into xml file
+			TransformerFactory transformerFactory = TransformerFactory.newInstance();
+			Transformer transformer = transformerFactory.newTransformer();
+			//enable indent on the xml file
+			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+			transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+			DOMSource source = new DOMSource(doc);
+			StreamResult result = new StreamResult(new File(reportPathpipeline + Util.getFileSeparator() +  tcname +".XML"));
+
+			transformer.transform(source, result);
+
+			System.out.println("Junit XML File created in Pipeline!");
+
+		} catch (ParserConfigurationException pce) {
+			pce.printStackTrace();
+		} catch (TransformerException tfe) {
+			tfe.printStackTrace();
+		}
+	}
+}
